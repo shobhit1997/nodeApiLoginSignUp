@@ -49,9 +49,10 @@ var UserSchema = new Schema({
 UserSchema.methods.generateAuthToken = function(){
 	var user=this;
 	var access='auth';
-	var token = jwt.sign({_id: user._id.toHexString(),access},'abcd');
+	var token = jwt.sign({_id: user._id.toHexString(),access},'abcd').toString();
 	user.tokens.push({access,token});
-	user.save().then(function(){
+	return user.save().then(()=>{
+		// console.log(token);
 		return token;
 	});
 } ;
