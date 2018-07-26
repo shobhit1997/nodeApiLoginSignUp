@@ -58,7 +58,7 @@ router.route('/signup')
 			 return user.generateAuthToken();
 		}).then(function(token){
 			console.log(token);
-			var link='http://localhost:8080/api/verify/'+user._id;
+			var link='https://agile-dusk-86729.herokuapp.com/api/verify/'+user._id;
 			const mailOptions = {
 			  from: 'zesterverify@gmail.com', 
 			  to: 'ny.neeraj12121@gmail.com', 
