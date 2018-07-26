@@ -3,6 +3,7 @@ const validator = require('validator');
 const jwt	=	require('jsonwebtoken');
 const _ 	=	require('lodash');
 const bcrypt	=	require('bcryptjs');
+var nodemailer = require('nodemailer');
 var Schema = mongoose.Schema;
 var UserSchema = new Schema({
 	name :{
@@ -32,6 +33,9 @@ var UserSchema = new Schema({
 		type: String,
 		required: true,
 		minlength: 6
+	},
+	status :{
+		type: Number
 	},
 	tokens: [{
 		access: {
