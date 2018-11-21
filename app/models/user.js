@@ -12,12 +12,6 @@ var UserSchema = new Schema({
 		minlength: 1,
 		trim: true
 	},
-	phone :{
-		type: Number,
-		required: true,
-		minlength: 10,
-		unique: true
-	},
 	email : {
 		type: String,
 		required: true,
@@ -28,11 +22,6 @@ var UserSchema = new Schema({
 			validator: validator.isEmail,
 			message: '{VALUE} is not a valid Email'
 		}
-	},
-	password : {
-		type: String,
-		required: true,
-		minlength: 6
 	},
 	status :{
 		type: Number
@@ -66,7 +55,7 @@ UserSchema.methods.toJSON=function(){
 	var user=this;
 	var  userObject= user.toObject();
 
-	return _.pick(userObject,['_id','name','phone','email']); 
+	return _.pick(userObject,['_id','name','email']); 
 }
 
 UserSchema.statics.findByCredentials=function(phone,password){

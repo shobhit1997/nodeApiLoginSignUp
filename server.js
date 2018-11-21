@@ -4,7 +4,8 @@ var bodyParser = require('body-parser');
 var mongoose	=	require('mongoose');
 var _	=	require('lodash');
 var User 	=	require('./app/models/user');
-mongoose.connect('mongodb://root:root1234@ds261460.mlab.com:61460/document_users');
+require('dotenv').config({ path: './variables.env' });
+mongoose.connect(process.env.MONGODB_URI);
 var nodemailer = require('nodemailer');
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
@@ -14,10 +15,10 @@ app.use(bodyParser.json());
 
 
 var transporter = nodemailer.createTransport({
- service: 'gmail',
+ service: process.env.SERVICE,
  auth: {
-        user: 'zesterverify@gmail.com',
-        pass: 'Zester@123'
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD
     }
 });
 
@@ -50,7 +51,7 @@ router.get('/',function(req,res){
 router.route('/signup')
 	.post(function(req,res){
 
-		var body=_.pick(req.body,['name','phone','email','password']);
+		var body=_.pick(req.body,['name','email']);
 		var user = new User(body);
 		user.status=0;
 		user.save().then(function(){
@@ -58,11 +59,11 @@ router.route('/signup')
 			 return user.generateAuthToken();
 		}).then(function(token){
 			console.log(token);
-			var link='https://agile-dusk-86729.herokuapp.com/api/verify/'+user._id;
+			var link='http://192.168.0.118:8080/api/verify/'+user._id;
 			const mailOptions = {
-			  from: 'zesterverify@gmail.com', 
-			  to: 'ny.neeraj12121@gmail.com', 
-			  subject: 'Subject of your email', 
+			  from: process.env.EMAIL, 
+			  to: user.email, 
+			  subject: 'Tech Trek verification mail', 
 			  html: '<p>'+user.name+' has registered to your service. Please click the link below to verify</p><a href=\"'+link+'\">link</a>'
 			};
 			transporter.sendMail(mailOptions, function (err, info) {
@@ -77,29 +78,30 @@ router.route('/signup')
 		});
 	});
 
-router.route('/login')
-	.post(function(req,res){
-		var body=_.pick(req.body,['phone','password']);
-		User.findByCredentials(body.phone,body.password).then(function(user){
-			if(user.status==0){
-				res.status(401).send("Your account is still not verified");
-			}
-			else{
-				return user.generateAuthToken().then(function(token){
-				res.header('x-auth',token).send(user);
-				});	
-			}
+// router.route('/login')
+// 	.post(function(req,res){
+// 		var body=_.pick(req.body,['phone','password']);
+// 		User.findByCredentials(body.phone,body.password).then(function(user){
+// 			if(user.status==0){
+// 				res.status(401).send("Your account is still not verified");
+// 			}
+// 			else{
+// 				return user.generateAuthToken().then(function(token){
+// 				res.header('x-auth',token).send(user);
+// 				});	
+// 			}
 
 			
-		}).catch(function(e){
-			res.status(400).send(e);
-		});
-	});
+// 		}).catch(function(e){
+// 			res.status(400).send(e);
+// 		});
+// 	});
 
 router.route('/verify/:id')
 	.get(function(req,res){
 
 		var id=req.params.id;
+		console.log(id);
 		User.findById(id).then(function(user){
 			user.status=1;
 			user.save().then(function(user){
@@ -114,16 +116,6 @@ router.route('/verify/:id')
 
 app.use('/api',router);
 
-// app.use('/login',function(req,res){
-
-// 	res.sendFile('login.html');
-// });
-
-// app.use('/',function(req,res){
-
-// 	res.sendFile('index.html');
-// });
-
 app.use(express.static('public', {
   extensions: ['html']
 }));
@@ -132,3 +124,8 @@ app.use(express.static('public', {
 
 app.listen(port);
 console.log('Running on Port '+ port);
+
+
+
+// var serverless = require('serverless-http');
+// module.exports.handler = serverless(app);
