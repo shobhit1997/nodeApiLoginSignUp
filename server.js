@@ -59,7 +59,7 @@ router.route('/signup')
 			 return user.generateAuthToken();
 		}).then(function(token){
 			console.log(token);
-			var link='http://192.168.0.118:8080/api/verify/'+user._id;
+			var link='http://localhost:8080/api/verify/'+user._id;
 			const mailOptions = {
 			  from: process.env.EMAIL, 
 			  to: user.email, 
@@ -104,8 +104,8 @@ router.route('/verify/:id')
 		console.log(id);
 		User.findById(id).then(function(user){
 			user.status=1;
-			user.save().then(function(user){
-				res.send(user.name+" is successfully verified");
+			user.save().then(function(user){	
+				res.redirect(301, 'https://forms.gle/LVRyGrid4HWDr3ri9')
 			});
 		}).catch(function(e){
 			console.log(e);
