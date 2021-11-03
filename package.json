@@ -26,7 +26,7 @@
     "nodemailer": "^4.6.7",
     "nodemod": "^1.5.19",
     "serverless-http": "^1.6.0",
-    "validator": "^10.4.0"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "serverless-offline": "^3.25.14"
